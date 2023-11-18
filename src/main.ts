@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { AppModule } from './app.module';
+import { AppModule } from 'src/app.module';
 import { json, urlencoded } from 'express';
 import * as cookieParser from 'cookie-parser';
 import { Logger } from 'src/common/logger/logger.service';
