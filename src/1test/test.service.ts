@@ -21,6 +21,7 @@
 //  Copyright © 2023年 Tencent. All rights reserved.
 
 import { Injectable } from '@nestjs/common';
+import { Gpio } from 'onoff';
 import { Logger } from 'src/common/logger/logger.service';
 import { TestBody, TestQuery } from 'src/1test/dtos/test.dto';
 
@@ -36,6 +37,12 @@ export class TestService {
   }
 
   piT(): Promise<any> {
+    const led = new Gpio(17, 'out');
+    const button = new Gpio(4, 'in', 'both');
+    button.watch((err, value) => {
+      this.logger.info('button is touched:', value);
+      led.writeSync(value);
+    });
     return Promise.resolve({ code: 0, msg: 'OK' });
   }
 }
