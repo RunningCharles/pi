@@ -23,6 +23,7 @@
 import { Gpio } from 'onoff';
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { Logger } from 'src/common/logger/logger.service';
+import { gpio } from 'src/common/utils';
 
 /* 
         A(11)
@@ -67,12 +68,17 @@ const kDIGs = {
   four:  new Gpio(21, 'low'),
 }
 
+const kAllPins = [].concat(Object.values(kLEDs)).concat(Object.values(kDIGs));
+
 @Injectable()
 export class ClockService implements OnModuleInit {
   private readonly logger = new Logger(ClockService.name);
 
   onModuleInit() {
-
     this.logger.info('on module init');
+  }
+
+  private displayDigit(dig: Gpio, num: number) {
+    gpio.reset(kAllPins, Gpio.HIGH);
   }
 }

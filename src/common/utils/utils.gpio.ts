@@ -20,6 +20,8 @@
 //  Created by CharlesChen on 2023/12/02.
 //  Copyright © 2023年 Tencent. All rights reserved.
 
+import { BinaryValue, Gpio } from "onoff";
+
 /* 
  +-----+-----+---------+------+---+---Pi 2---+---+------+---------+-----+-----+
  | BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |
@@ -49,6 +51,12 @@
  +-----+-----+---------+------+---+---Pi 2---+---+------+---------+-----+-----+
 */
 
-export class UtilsGPIO {}
+export class UtilsGPIO {
+  reset(gpios: Gpio[], value: BinaryValue) {
+    for (const item of gpios) {
+      item.write(value);
+    }
+  }
+}
 
 export const gpio = new UtilsGPIO();
