@@ -58,7 +58,6 @@ export class IPReportService {
   private getIp(): string {
     const ifacesdict = os.networkInterfaces()
     for (const item in ifacesdict) {
-      const ifaces = ifacesdict[item]
       for (const { family, address, internal } of ifacesdict[item]) {
         if (family === 'IPv4' && address !== '127.0.0.1' && !internal) {
           return address
