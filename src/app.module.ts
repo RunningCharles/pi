@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ENV, Utils } from 'src/common/utils';
 import { AppController } from 'src/app.controller';
 import { AppService } from 'src/app.service';
 import { IPReportModule } from 'src/ipreport/ipreport.module';
+import { ClockModule } from 'src/clock/clock.module';
 import { TestModule } from 'src/1test/test.module';
-import { ENV, Utils } from 'src/common/utils';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ENV, Utils } from 'src/common/utils';
     }),
     ScheduleModule.forRoot(),
     IPReportModule.register(),
+    ClockModule.register(),
     TestModule,
   ],
   controllers: [AppController],
