@@ -53,6 +53,11 @@ F(10)|         |B(7)
 const HIGH = Gpio.HIGH;
 const LOW = Gpio.LOW;
 
+enum Digit {
+  zero = 0, one = 1, two   = 2, three = 3, four = 4,
+  five = 5, six = 6, seven = 7, eight = 7, nine = 9,
+}
+
 const kLEDs = {
   a:  new Gpio(26, 'low'),
   b:  new Gpio(19, 'low'),
@@ -71,32 +76,21 @@ const kDIGs = {
   four:  new Gpio(21, 'low'),
 }
 
-enum Digit {
-  zero  = 0,
-  one   = 1,
-  two   = 2,
-  three = 3,
-  four  = 4,
-  five  = 5,
-  six   = 6,
-  seven = 7,
-  eight = 7,
-  nine  = 9,
-}
-
-const DigitLEDs: {[key: number]: {[key: string]: BinaryValue}} = {};
-DigitLEDs[Digit.zero]  = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
-DigitLEDs[Digit.one]   = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
-DigitLEDs[Digit.two]   = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
-DigitLEDs[Digit.three] = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
-DigitLEDs[Digit.four]  = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
-DigitLEDs[Digit.five]  = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
-DigitLEDs[Digit.six]   = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
-DigitLEDs[Digit.seven] = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
-DigitLEDs[Digit.eight] = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
-DigitLEDs[Digit.nine]  = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
-
+const kLEDPins = Object.values(kLEDs);
+const kDIGPins = Object.values(kDIGs);
 const kAllPins = [].concat(Object.values(kLEDs)).concat(Object.values(kDIGs));
+
+const kDigitValues: {[key: number]: {[key: string]: BinaryValue}} = {};
+kDigitValues[Digit.zero]  = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW  };
+kDigitValues[Digit.one]   = { a: LOW,  b: HIGH, c: HIGH, d: LOW,  e: LOW,  f: LOW,  g: LOW  };
+kDigitValues[Digit.two]   = { a: HIGH, b: HIGH, c: LOW,  d: HIGH, e: HIGH, f: LOW,  g: HIGH };
+kDigitValues[Digit.three] = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: LOW,  f: LOW,  g: HIGH };
+kDigitValues[Digit.four]  = { a: LOW,  b: HIGH, c: HIGH, d: LOW,  e: LOW,  f: HIGH, g: HIGH };
+kDigitValues[Digit.five]  = { a: HIGH, b: LOW,  c: HIGH, d: HIGH, e: LOW,  f: HIGH, g: HIGH };
+kDigitValues[Digit.six]   = { a: HIGH, b: LOW,  c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: HIGH };
+kDigitValues[Digit.seven] = { a: HIGH, b: HIGH, c: HIGH, d: LOW,  e: LOW,  f: LOW,  g: LOW  };
+kDigitValues[Digit.eight] = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: HIGH };
+kDigitValues[Digit.nine]  = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: LOW,  f: HIGH, g: HIGH };
 
 @Injectable()
 export class ClockService implements OnModuleInit {
@@ -108,6 +102,11 @@ export class ClockService implements OnModuleInit {
   }
 
   private displayDigit(dig: Gpio, digit: Digit) {
-    gpio.reset(kAllPins, HIGH);
+    gpio.reset(kDIGPins, HIGH);
+    for (const item in kDigitValues[digit]) {
+      const gpio = kLEDs[item] as Gpio;
+      gpio.write(kDigitValues[digit][item]);
+    }
+    dig.write(LOW);
   }
 }
