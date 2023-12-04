@@ -20,7 +20,7 @@
 //  Created by CharlesChen on 2023/12/03.
 //  Copyright © 2023年 Tencent. All rights reserved.
 
-import { Gpio } from 'onoff';
+import { BinaryValue, Gpio } from 'onoff';
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { Logger } from 'src/common/logger/logger.service';
 import { gpio } from 'src/common/utils';
@@ -50,6 +50,9 @@ F(10)|         |B(7)
      DIG(12)     DIG(9)          DIG(8)      DIG(6)
 */
 
+const HIGH = Gpio.HIGH;
+const LOW = Gpio.LOW;
+
 const kLEDs = {
   a:  new Gpio(26, 'low'),
   b:  new Gpio(19, 'low'),
@@ -68,6 +71,31 @@ const kDIGs = {
   four:  new Gpio(21, 'low'),
 }
 
+enum Digit {
+  zero  = 0,
+  one   = 1,
+  two   = 2,
+  three = 3,
+  four  = 4,
+  five  = 5,
+  six   = 6,
+  seven = 7,
+  eight = 7,
+  nine  = 9,
+}
+
+const DigitLEDs: {[key: number]: {[key: string]: BinaryValue}} = {};
+DigitLEDs[Digit.zero]  = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
+DigitLEDs[Digit.one]   = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
+DigitLEDs[Digit.two]   = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
+DigitLEDs[Digit.three] = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
+DigitLEDs[Digit.four]  = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
+DigitLEDs[Digit.five]  = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
+DigitLEDs[Digit.six]   = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
+DigitLEDs[Digit.seven] = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
+DigitLEDs[Digit.eight] = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
+DigitLEDs[Digit.nine]  = { a: HIGH, b: HIGH, c: HIGH, d: HIGH, e: HIGH, f: HIGH, g: LOW };
+
 const kAllPins = [].concat(Object.values(kLEDs)).concat(Object.values(kDIGs));
 
 @Injectable()
@@ -76,9 +104,10 @@ export class ClockService implements OnModuleInit {
 
   onModuleInit() {
     this.logger.info('on module init');
+    this.displayDigit(kDIGs.four, Digit.six);
   }
 
-  private displayDigit(dig: Gpio, num: number) {
-    gpio.reset(kAllPins, Gpio.HIGH);
+  private displayDigit(dig: Gpio, digit: Digit) {
+    gpio.reset(kAllPins, HIGH);
   }
 }
