@@ -20,10 +20,10 @@
 //  Created by CharlesChen on 2023/12/03.
 //  Copyright © 2023年 Tencent. All rights reserved.
 
-import { BinaryValue, Gpio } from 'onoff';
+import { Gpio } from 'onoff';
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { Logger } from 'src/common/logger/logger.service';
-import { Utils, gpio } from 'src/common/utils';
+import { gpio } from 'src/common/utils';
 import { DIGs, Digit, HIGH, LEDs, LOW, kDigitValues } from 'src/clock/interfaces/clock.interface';
 
 const kSleepDuration = 5;
@@ -87,8 +87,7 @@ export class ClockService implements OnModuleInit {
       }).then(_ => {
         const values = kDigitValues[digit];
         const promises = Object.keys(values).map(item => {
-          const gpio = this.leds[item] as Gpio;
-          return gpio.write(values[item]);
+          return (this.leds[item] as Gpio).write(values[item]);
         });
         return Promise.all(promises);
       }).then(_ => {
