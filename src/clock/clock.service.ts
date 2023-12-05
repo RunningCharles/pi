@@ -26,7 +26,7 @@ import { Logger } from 'src/common/logger/logger.service';
 import { Utils, gpio } from 'src/common/utils';
 import { DIGs, Digit, HIGH, LEDs, LOW, kDigitValues } from 'src/clock/interfaces/clock.interface';
 
-const kSleepDuration = 10;
+const kSleepDuration = 5;
 
 @Injectable()
 export class ClockService implements OnModuleInit {
