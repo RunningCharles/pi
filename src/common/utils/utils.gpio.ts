@@ -52,10 +52,16 @@ import { BinaryValue, Gpio } from "onoff";
 */
 
 export class UtilsGPIO {
-  reset(gpios: Gpio[], value: BinaryValue) {
-    for (const item of gpios) {
-      item.write(value);
-    }
+  reset(gpios: Gpio[], value: BinaryValue): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      Promise.resolve().then(_ => {
+        return Promise.all(gpios.map(i => i.write(value)));
+      }).then(_ => {
+        resolve();
+      }).catch(error => {
+        reject(error);
+      });
+    });
   }
 }
 

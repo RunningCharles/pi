@@ -20,6 +20,7 @@
 //  Created by CharlesChen on 2023/10/27.
 //  Copyright © 2023年 Tencent. All rights reserved.
 
+import * as os from 'os';
 import { decamelize } from 'humps';
 import { randomUUID } from 'crypto';
 
@@ -43,6 +44,10 @@ export class Utils {
 
   static isProd(): boolean {
     return this.env() === ENV.prod;
+  }
+
+  static isPi(): boolean {
+    return os.hostname() === 'pi';
   }
 
   static decamelize(params: SimpleParams | any): SimpleParams {

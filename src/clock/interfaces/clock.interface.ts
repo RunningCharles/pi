@@ -88,7 +88,7 @@ export class LEDs {
 
   constructor() {
     for (const item of Object.keys(kLedValues)) {
-      this[item] = Utils.isProd() ? new Gpio(kLedValues[item], 'low') : new GpioMock();
+      this[item] = Utils.isPi() ? new Gpio(kLedValues[item], 'low') : new GpioMock();
     }
   }
 }
@@ -101,7 +101,7 @@ export class DIGs {
 
   constructor() {
     for (const item of Object.keys(kDigValues)) {
-      this[item] = Utils.isProd() ? new Gpio(kDigValues[item], 'low') : new GpioMock();
+      this[item] = Utils.isPi() ? new Gpio(kDigValues[item], 'low') : new GpioMock();
     }
   }
 }

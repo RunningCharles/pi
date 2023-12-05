@@ -26,6 +26,8 @@ import { Logger } from 'src/common/logger/logger.service';
 import { Utils, gpio } from 'src/common/utils';
 import { DIGs, Digit, HIGH, LEDs, LOW, kDigitValues } from 'src/clock/interfaces/clock.interface';
 
+const kSleepDuration = 10;
+
 @Injectable()
 export class ClockService implements OnModuleInit {
   private readonly logger = new Logger(ClockService.name);
@@ -40,25 +42,68 @@ export class ClockService implements OnModuleInit {
     this.digs = new DIGs();
     this.digPins = [this.digs.one, this.digs.two, this.digs.three, this.digs.four];
 
-    this.displayTime(new Date());
+    this.displayTime();
   }
 
-  private displayTime(time: Date) {
-    const hours = time.getHours();
-    const minutes = time.getMinutes();
-    const digit1 = Math.floor(hours / 10);
-    const digit2 = hours % 10;
-    const digit3 = Math.floor(minutes / 10);
-    const digit4 = minutes % 10;
-    this.displayDigit(this.digs.four, digit4);
+  private displayTime(): Promise<void> {
+    return new Promise<void>((resolve, _) => {
+      const time = new Date();
+      const hours = time.getHours();
+      const minutes = time.getMinutes();
+      const digit1 = Math.floor(hours / 10);
+      const digit2 = hours % 10;
+      const digit3 = Math.floor(minutes / 10);
+      const digit4 = minutes % 10;
+      Promise.resolve().then(_ => {
+        return this.displayDigit(this.digs.one, digit1);
+      }).then(_ => {
+        return this.sleep(kSleepDuration);
+      }).then(_ => {
+        return this.displayDigit(this.digs.two, digit2);
+      }).then(_ => {
+        return this.sleep(kSleepDuration);
+      }).then(_ => {
+        return this.displayDigit(this.digs.three, digit3);
+      }).then(_ => {
+        return this.sleep(kSleepDuration);
+      }).then(_ => {
+        return this.displayDigit(this.digs.four, digit4);
+      }).then(_ => {
+        return this.sleep(kSleepDuration);
+      }).then(_ => {
+        return this.displayTime();
+      }).then(_ => {
+        resolve();
+      }).catch(error => {
+        this.logger.error('dispay time failed, error:', error);
+      });
+    });
   }
 
-  private displayDigit(dig: Gpio, digit: Digit) {
-    gpio.reset(this.digPins, HIGH);
-    for (const item in kDigitValues[digit]) {
-      const gpio = this.leds[item] as Gpio;
-      gpio.write(kDigitValues[digit][item]);
-    }
-    dig.write(LOW);
+  private displayDigit(dig: Gpio, digit: Digit): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      Promise.resolve().then(_ => {
+        return gpio.reset(this.digPins, HIGH);
+      }).then(_ => {
+        const values = kDigitValues[digit];
+        const promises = Object.keys(values).map(item => {
+          const gpio = this.leds[item] as Gpio;
+          return gpio.write(values[item]);
+        });
+        return Promise.all(promises);
+      }).then(_ => {
+        return dig.write(LOW);
+      }).then(_ => {
+        resolve();
+      }).catch(error => {
+        reject(error);
+      });
+    });
+  }
+
+  private sleep(ms: number): Promise<void> {
+    return new Promise<void>((resolve, _) => {
+      setTimeout(resolve, ms);
+    });
   }
 }
