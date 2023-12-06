@@ -1,6 +1,7 @@
 import * as os from 'os';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Logger } from 'src/common/logger/logger.service';
+import { gpt } from 'src/common/utils';
 
 @Injectable()
 export class AppService implements OnModuleInit {
@@ -13,6 +14,11 @@ export class AppService implements OnModuleInit {
     this.logger.info('platform:', os.platform());
     this.logger.info('release:', os.release());
     this.logger.info('hostname:', os.hostname());
+
+    gpt.init({
+      apikey: process.env.OPENAI_KEY,
+      organization: process.env.OPENAI_ORG,
+    });
   }
 
   handle(): Promise<any> {

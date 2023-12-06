@@ -23,3 +23,4 @@
 export { Utils, ENV } from 'src/common/utils/utils.common';
 export { http } from 'src/common/utils/utils.http';
 export { gpio } from 'src/common/utils/utils.gpio';
+export { gpt } from 'src/common/utils/utils.gpt';
